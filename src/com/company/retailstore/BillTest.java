@@ -195,4 +195,36 @@ public class BillTest {
 
 		assertEquals("net payable amount calcualtion is not correct", netPayableAmount, expectedAmount, DELTA);
 	}
+
+	@Test
+	public void shouldApplyZeroDiscountForCustomerWhenBuyingGrocerciesLessThan100() {
+		// given
+		Date customerStartDate = new Date();
+		User user = new Customer("John", "Doe", customerStartDate);
+		ShoppingCart shoppingCart = new ShoppingCart(user);
+
+		double priceForSodaBottle = 2.0;
+		Product sodaBottle = new Product("soda-bottle", priceForSodaBottle, ProductType.GROCERCIES);
+		int numberOfSodaBottlesPurchased = 5;
+		shoppingCart.addToShoppingCart(sodaBottle, numberOfSodaBottlesPurchased);
+
+		Bill bill = new Bill(shoppingCart);
+
+		// when
+		double netPayableAmount = bill.computeNetPayableAmount();
+
+		// then
+		// there is no discount in this case because the product is of grocery type and
+		// the amount of fill is less than 100 dollars.
+		double discount = 0;
+		double expectedAmount = priceForSodaBottle * numberOfSodaBottlesPurchased - discount;
+
+		log.log("expectedAmount: " + expectedAmount);
+		log.log("netPayableAmount: " + netPayableAmount);
+
+		// double delta = 0.000001;
+
+		assertEquals("net payable amount calcualtion is not correct", netPayableAmount, expectedAmount, DELTA);
+	}
+
 }
